@@ -8,7 +8,9 @@ class Home extends React.Component {
         // setup intial values and variables and component state
         // only place where this.state should be used
         // everywhere else use setState()
-        super(props);
+        // dont use setState here
+        // not needed if state is not initialized and methods are not bind
+        super(props); // skipping this will lead to undefined props
         this.state = {
            mounted: true
         }
@@ -32,42 +34,16 @@ class Home extends React.Component {
 
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        console.log('2.a(update) should component update', nextProps, nextState);
-        return true;
-        //returning false here makes no chnages to the view
-        // default is true
-    }
-
-    getSnapshotBeforeUpdate(prevProps, prevState){
-        // called after render creates the elemets
-        // and before updating the virtual DOM to actual DOM
-        // also know as pre-commit-phase
-        // both current and previous stat and props are available
-        console.log('3.a(udpate) get snapshot before update', prevProps, prevState);
-        return null;
-        // it is mandatory to retun a value or null
-
-        // if it returns a vluae, it is available as third parameter in component did update
-    }
-
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        // snapshot is the value returned from getSnapShotBeforeUpdate()
-        // called when the DOM is updated
-        console.log('3.b(update) component did update', prevProps, prevState, snapshot)
-    }
-
-    componentWillUnmount(){
-        // last method in lifecycle
-        // all cleanups related to component happen here
-        console.log('5 (unmount) component will unmount');
-    }
-
-
     render() {
         // this is a pure method
         // mandatory to be present in a component
+        // can return 
+        // 1. react elements - typically JSX elements
+        // 2. array and fragments, - multiple elements
+        // 3. portals, - lets you render children into a different DOM tree
+        // 4. string and numbers - rendered as text nodes 
+        // 5. booleans and nulls - renders nothing 
+        // not invoked if shouldComponentUpdate() returns false
 
         console.log('3.(mount) render');
         let newCmp = '<p>this is before mount</p>';
@@ -93,6 +69,50 @@ class Home extends React.Component {
         // all api calls should happen here
         console.log('4.(mount) component did mount')
     }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        console.log('2.a(update) should component update', nextProps, nextState);
+        return true;
+        //returning false here makes no chnages to the view [render() and componentDidUpdate() are not called]
+        // called before rendering
+        // exists as performance optimization
+        // default is true
+        // try to use a pure component instead of avoiding rerendering
+        // pure component performs shallow compoarison of state and porops and reduces a chance to skip necessary update
+
+    }
+
+    getSnapshotBeforeUpdate(prevProps, prevState){
+        // called after render creates the elemets
+        // and before updating the virtual DOM to actual DOM
+        // like if you want to capture the scroll potision before it potentially changes
+        // also know as pre-commit-phase
+        // both current and previous stat and props are available
+        console.log('3.a(udpate) get snapshot before update', prevProps, prevState);
+        return null;
+        // it is mandatory to retun a value or null
+
+        // if it returns a vluae, it is available as third parameter in component did update
+    }
+
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // snapshot is the value returned from getSnapShotBeforeUpdate()
+        // called when the DOM is updated
+        // not called in initial render
+        // not invoked if shouldComponentUpdate() returns false
+        console.log('3.b(update) component did update', prevProps, prevState, snapshot)
+    }
+
+    componentWillUnmount(){
+        // last method in lifecycle
+        // all cleanups related to component happen here
+        // dont call setState here
+        console.log('5 (unmount) component will unmount');
+    }
+
+
+   
     static getDerivedStateFromError() {
         console.log('ERROR : get derived state from error')
     }
